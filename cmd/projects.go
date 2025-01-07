@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/solelymoose/golangfilemanager/shared" // Adjust the import path as necessary
+	"github.com/solelymoose/golangprojectmanager/shared"
 
 	"github.com/spf13/cobra"
 )
@@ -25,7 +25,7 @@ var projects = &cobra.Command{
 		fmt.Println("Projects:")
 		for _, category := range categories {
 			if category.IsDir() {
-				fmt.Println(category.Name())
+				fmt.Println("   ┏━━━", category.Name())
 				// Construct the path to the subdirectory
 				catName := strings.ToLower(category.Name())
 				subDirPath := filepath.Join(shared.ProjectDir, catName)
@@ -36,11 +36,12 @@ var projects = &cobra.Command{
 				}
 
 				// Print the contents of the category directory
-				fmt.Printf("Contents of %s:\n", catName)
+				//fmt.Printf("Contents of %s:\n", catName)
 				for _, project := range categoryProjects {
-					fmt.Println("  -", project.Name())
+					fmt.Println("   ┣━", project.Name())
 				}
 			}
+			fmt.Println(" ")
 		}
 	},
 }
