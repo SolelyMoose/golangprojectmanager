@@ -1,41 +1,23 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
-	"path/filepath"
+	"os/exec"
 
-	"github.com/solelymoose/golangfilemanager/shared" // Adjust the import path as necessary
-
+	"github.com/solelymoose/golangprojectmanager/shared"
 	"github.com/spf13/cobra"
 )
 
 var config = &cobra.Command{
 	Use:   "config",
-	Short: "Opens the config",
+	Short: "Opens the config folder",
 	Run: func(cmd *cobra.Command, args []string) {
-		filePath := filepath.Join(shared.MainDir, "config.json")
-		fmt.Println(shared.MainDir)
-		fmt.Println(filePath)
+		// Assuming shared.ConfigFile holds the full path to the config file
+		command := exec.Command("code", shared.ConfigFile) // Pass the path as an argument to the command
 
-		// Open the file
-		file, err := os.Open(filePath)
+		err := command.Run()
 		if err != nil {
-			fmt.Printf("Error opening file: %v\n", err)
-			return
+			fmt.Println("Error opening config folder:", err)
 		}
-		defer file.Close() // Ensure the file is closed when done
-
-		// Read the file into memory
-		var configData map[string]interface{}
-		decoder := json.NewDecoder(file)
-		if err := decoder.Decode(&configData); err != nil {
-			fmt.Printf("Error decoding JSON: %v\n", err)
-			return
-		}
-
-		// Print the parsed JSON
-		fmt.Printf("Config Data: %+v\n", configData)
 	},
 }
