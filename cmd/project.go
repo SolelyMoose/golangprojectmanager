@@ -3,10 +3,11 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
-	"github.com/solelymoose/golangfilemanager/shared" // Adjust the import path as necessary
+	"github.com/solelymoose/golangprojectmanager/shared"
 
 	"github.com/spf13/cobra"
 )
@@ -17,28 +18,29 @@ var project = &cobra.Command{
 }
 
 var create = &cobra.Command{
-	Use:   "create [project-name] [language] [type]",
+	Use:   "create [project-name] [language] [preset]",
 	Short: "Create a new project",
 	Args:  cobra.ExactArgs(3),
 	Run: func(cmd *cobra.Command, args []string) {
 		projectName := strings.ToLower(args[0])
-		language := strings.ToLower(args[1])
-		projectType := strings.ToLower(args[2])
+		projectLanguage := strings.ToLower(args[1])
+		projectPreset := strings.ToLower(args[2])
+		fmt.Printf("Creating project with name: '%s', language: '%s', and preset: '%s'.\n", projectName, projectLanguage, projectPreset)
 
 		// Check if the project already exists
-		if checkForProject(language, projectName) {
-			fmt.Printf("Project '%s' already exists in language category '%s'.\n", projectName, language)
+		if checkForProject(projectLanguage, projectName) {
+			fmt.Printf("Project '%s' already exists in language category '%s'.\n", projectName, projectLanguage)
 			return
 		}
 
 		// Create project directory
-		projectPath := filepath.Join(shared.ProjectDir, language, projectName)
+		projectPath := filepath.Join(shared.ProjectDir, projectLanguage, projectName)
 		if err := os.MkdirAll(projectPath, 0755); err != nil {
 			fmt.Printf("Error creating project directory '%s': %v\n", projectPath, err)
 			return
 		}
 
-		fmt.Printf("Successfully created project '%s' under language '%s' and type '%s'.\n", projectName, language, projectType)
+		fmt.Printf("Successfully created project '%s' under language '%s' and type '%s'.\n", projectName, projectLanguage, projectPreset)
 	},
 }
 
@@ -86,9 +88,15 @@ var open = &cobra.Command{
 			return
 		}
 
-		// Simulate opening the project
+		// open the project
 		projectPath := filepath.Join(shared.ProjectDir, language, projectName)
 		fmt.Printf("Opening project '%s' at path '%s'.\n", projectName, projectPath)
+		command := exec.Command("code", projectPath)
+
+		err := command.Run()
+		if err != nil {
+			fmt.Println("Error opening project folder:", err)
+		}
 	},
 }
 
@@ -117,4 +125,10 @@ func ExecuteProjectCLI() {
 		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
+}
+
+func init() {
+	project.AddCommand(create)
+	project.AddCommand(delete)
+	project.AddCommand(open)
 }
