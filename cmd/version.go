@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/solelymoose/golangfilemanager/shared" // Adjust the import path as necessary
+	"github.com/solelymoose/golangprojectmanager/shared"
 
 	"github.com/spf13/cobra"
 )
